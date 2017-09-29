@@ -1,0 +1,20 @@
+#!/bin/sh
+
+set -e
+
+: ${SOCKET:=/var/run/docker.sock}
+: ${PORT:=2375}
+
+main() {
+  if [ -e $SOCKET ]; then
+    # start socat as proxy
+    socat -d -d TCP-L:${PORT},fork UNIX:${SOCKET}
+  else
+    # print usage
+    cat << EOF
+Usage: docker run -d -p $PORT:$PORT -v $SOCKET:$SOCKET --name=socat cuigh/socat
+EOF
+  fi
+}
+
+main "$@"
